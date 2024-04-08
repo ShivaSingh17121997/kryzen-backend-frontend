@@ -1,6 +1,6 @@
 const express = require("express");
+require("dotenv").config();
 const cors = require("cors");
-const port = 8080;
 const app = express();
 const { connection } = require("./db");
 const { userRouter } = require("./Controller/user.routes");
@@ -14,11 +14,11 @@ app.use("/tasks", taskRoutes);
 
 
 
-app.listen(port, async (err) => {
+app.listen(process.env.PORT, async (err) => {
     if (err) {
         console.log("Something is wrong server error");
     } else {
         await connection;
-        console.log("server is running at port", port);
+        console.log("server is running at port", process.env.PORT);
     }
 });

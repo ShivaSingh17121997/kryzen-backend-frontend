@@ -1,6 +1,7 @@
+require("dotenv").config()
 const mongoose = require("mongoose");
 
-const connction = mongoose.connect("mongodb://localhost:27017/taskBuilder");
+const connction = mongoose.connect(process.env.CONNECTION);
 
 module.exports = {
     connction

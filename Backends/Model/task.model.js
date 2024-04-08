@@ -5,16 +5,13 @@ const taskSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    description: {
-        type: String,
-        default: ''
-    },
+
 
     createdAt: {
         type: String,
         validate: {
             validator: function (date) {
-                // Check if the value is a valid date in the format "YYYY-MM-DD"
+                // Check if the value is a valid date
                 return /^\d{4}-\d{2}-\d{2}$/.test(date);
             },
             message: props => `${props.value} is not a valid date in the format "YYYY-MM-DD"`
