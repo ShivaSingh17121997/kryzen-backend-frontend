@@ -1,19 +1,21 @@
 
 import './App.css'
+import Navbar from './Components/Navbar';
 import Home from './Pages.jsx/Home'
+import AllRoutes from './Routes/AllRoutes';
 
 function App() {
 
   return (
     <>
       <div>
-        <div class='px-4 m-auto rounded-lg w-full  py-5  bg-gray-900			' >
-          <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">TasK Builder</h5>
-        </div>
-        <Home />
+        
+        <Navbar />
+        <AllRoutes />
+
       </div>
     </>
   )
 }
 
-export default App
+export default App;

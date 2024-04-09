@@ -8,52 +8,49 @@ export default function Home() {
     const [checkbox, setCheckbox] = useState(false);
     const [formError, setFormError] = useState(null);
 
-    const handleTasks = (e) => {
+    useEffect(() => {
+        fetchTaskData();
+    }, []);
+
+    const fetchTaskData = async () => {
+        try {
+            const res = await axios.get("http://localhost:8080/tasks/");
+            setTaskData(res.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const handleTasks = async (e) => {
         e.preventDefault();
         if (!userName) {
             setFormError("Please fill out all required fields.");
             return;
         }
 
-        axios.post("http://localhost:8080/tasks/addtask", {
-            title: userName,
-            completed: checkbox,
-        })
-            .then((response) => {
-                console.log(response);
-                setTaskData([response.data, ...taskData]);
-                setUserName(""); // Clear input fields after successful submission
-                setFormError(null); // Reset form error
-                location.reload();
-            })
-            .catch((error) => {
-                console.error(error);
+        try {
+            const response = await axios.post("http://localhost:8080/tasks/addtask", {
+                title: userName,
+                completed: checkbox,
             });
-    }
+            setTaskData(prevData => [...prevData, response.data]);
+            setUserName(""); // Clear input fields after successful submission
+            setCheckbox(false); // Reset checkbox to false after successful submission
+            setFormError(null); // Reset form error
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
+    const handleFilterByTime = async () => {
+        try {
+            const res = await axios.get("http://localhost:8080/tasks/sortByTime");
+            setTaskData(res.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
-    // Fetching the data from backend 
-    useEffect(() => {
-        axios.get("http://localhost:8080/tasks/")
-            .then((res) => {
-                console.log(res.data);
-                setTaskData(res.data);
-            });
-
-    }, []);
-
-    // sort by time
-    const handleFilterByTime = () => {
-        axios.get("http://localhost:8080/tasks/sortByTime")
-            .then((res) => {
-                console.log(res.data);
-                setTaskData(res.data);
-            })
-    }
-
-
-    // handle reset button
-   
     return (
         <div>
             <div>
@@ -68,7 +65,7 @@ export default function Home() {
 
                     <input
                         checked={checkbox}
-                        onChange={(e) => setCheckbox(e.target.checked)}
+                        onChange={(e) => setCheckbox(e.target.checked)} // Update checkbox value to the checked status
                         id="helper-checkbox"
                         aria-describedby="helper-checkbox-text"
                         type="checkbox"
@@ -76,32 +73,22 @@ export default function Home() {
                     />
                     <label className='mx-1' >Completed</label>
 
-
-
-                    <button type="submit" class="bg-blue-500 mx-4 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    <button type="submit" className="bg-blue-500 mx-4 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                         Save
                     </button>
 
                     {formError && <p className="text-red-500">{formError}</p>}
                 </form>
 
-
-                {/* finter by time button */}
-                <div className='text-right mx-0' >
-                    <button onClick={handleFilterByTime} type="submit" class=" bg-blue-500  hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                {/* Filter by time button */}
+                <div className='text-right mx-0'>
+                    <button onClick={handleFilterByTime} type="button" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                         Filter by time
-
                     </button>
-                    {/* <button onClick={handleReset} type="submit" class="  bg-blue-500 mx-1 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                        Reset
-                    </button> */}
                 </div>
 
-
                 <div>
-                    {
-                        taskData?.map((item) => <Card key={item._id} {...item} />)
-                    }
+                    {taskData.map((item) => <Card key={item._id} {...item} />)}
                 </div>
             </div>
         </div>
